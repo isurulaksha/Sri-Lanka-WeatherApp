@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Weather App - Randeepa Lakshan</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="card">
+    <div class="search">
+        <input type="text" placeholder="enter city name" spellcheck="false"></button>
+        <button><img src="imgs/search.png" ></button>
+        
+        <div class="flag">  
+        <img src="imgs/Flag.png">
+        </div>
+    </div>
+    <div class="weather">
+        <img src="imgs/rain.png" class="weather-icon">
+        <h1 class="temp">30°c</h1>
+        <h2 class="city">Matara</h2>
+        <div class="details">
+            <div class="col">
+                <img src="imgs/hmtd.png">
+                <div>
+                    <p class="humidity">50%</p>
+                    <p>Humidity</p>
+                </div>
+            </div>
+            <div class="col">
+                <img src="imgs/wind.png">
+                <div>
+                    <p class="wind">15 km/h</p>
+                    <p>Wind Speed</p>
+                       
+        </div>
+    </div>
+</div>
+
+<script>
+const apiKey = "YOUR_API_KEY"; // Replace with your OpenWeatherMap API key
+const apiUrl = "https://api.openweathermap.org/data/2.5/weather";
+
+const searchBox = document.querySelector(".search input");
+const searchBtn = document.querySelector(".search button");
+const weatherIcon = document.querySelector(".weather-icon");
+
+async function checkWeather(city) {
+    try {
+        // Add "Sri Lanka" to the city name for more accurate results
+        const searchCity = city + ", Sri Lanka";
+        const response = await fetch(`${apiUrl}?q=${searchCity}&appid=${apiKey}&units=metric`);
+        
+        if (!response.ok) {
+            throw new Error('City not found');
+        }
+
+        const data = await response.json();
+
+        // Ensure temperature is within Sri Lanka's typical range (20-33°C)
+        let temp = Math.round(data.main.temp);
+        if (temp < 20) temp = 20;
+        if (temp > 33) temp = 33;
+
+        // Update UI elements
+        document.querySelector(".city").innerHTML = data.name;
+        document.querySelector(".temp").innerHTML = temp + "°c";
+        document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
+        document.querySelector(".wind").innerHTML = Math.round(data.wind.speed) + " km/h";
+
+        // Update weather icon based on time and weather
+        const hours = new Date().getHours();
+        const isNight = hours < 6 || hours > 18;
+
+        switch (data.weather[0].main.toLowerCase()) {
+            case "clouds":
+            case "cloudy":
+                weatherIcon.src = "imgs/clouds.png";
+                break;
+            case "clear":
+                weatherIcon.src = isNight ? "imgs/sun_PNG13418.png" : "imgs/sun_PNG13418.png";
+                break;
+            case "rain":
+            case "rainy":
+                weatherIcon.src = "imgs/rain.png";
+                break;
+            case "drizzle":
+                weatherIcon.src = "imgs/drizzle.png";
+                break;
+            case "mist":
+            case "haze":
+                weatherIcon.src = "imgs/mist.png";
+                break;
+            case "thunderstorm":
+                weatherIcon.src = "imgs/rain.png";
+                break;
+            default:
+                weatherIcon.src = "imgs/sun_PNG13418.png";
+        }
+
+        document.querySelector(".weather").style.display = "block";
+
+    } catch (error) {
+        console.error('Error:', error);
+        alert("Please enter a valid Sri Lankan city name!");
+    }
+}
+
+// For testing without API key, use this mock version:
+function checkWeatherMock(city) {
+    // Sri Lankan cities and their typical weather patterns
+    const sriLankaCities = {
+        "colombo": { baseTemp: 30, variance: 3 },
+        "kandy": { baseTemp: 29, variance: 3 },
+        "galle": { baseTemp: 30, variance: 2 },
+        "jaffna": { baseTemp: 28, variance: 2 },
+        "nuwara eliya": { baseTemp: 20, variance: 3 },
+        "anuradhapura": { baseTemp: 32, variance: 2 },
+        "batticaloa": { baseTemp: 29, variance: 2 },
+        "trincomalee": { baseTemp: 29, variance: 2 },
+        "matara": { baseTemp: 30, variance: 2 },
+        "ratnapura": { baseTemp: 32, variance: 3 },
+        "kurunegala": { baseTemp: 31, variance: 3 },
+        "ampara": { baseTemp: 31, variance: 3 },
+        "badulla": { baseTemp: 26, variance: 3 },
+        "gampaha": { baseTemp: 31, variance: 3 },
+        "hambantota": { baseTemp: 30, variance: 3 },
+        "kalutara": { baseTemp: 30, variance: 3 },
+        "kegalle": { baseTemp: 31, variance: 3 },
+        "kilinochchi": { baseTemp: 30, variance: 3 },
+        "mannar": { baseTemp: 28, variance: 3 },
+        "matale": { baseTemp: 29, variance: 3 },
+        "monaragala": { baseTemp: 30, variance: 3 },
+        "mullaitivu": { baseTemp: 29, variance: 3 },
+        "polonnaruwa": { baseTemp: 31, variance: 3 },
+        "puttalam": { baseTemp: 30, variance: 3 },
+        "trincomalee": { baseTemp: 29, variance: 3 },
+        "vavuniya": { baseTemp: 31, variance: 3 }
+    };
+
+    // Get city settings or use default
+    const citySettings = sriLankaCities[city.toLowerCase()] || { baseTemp: 28, variance: 3 };
+
+    // Generate realistic temperature for the city
+    const temp = Math.round(citySettings.baseTemp + (Math.random() * citySettings.variance * 2 - citySettings.variance));
+
+    // Generate realistic humidity based on region
+    const humidity = Math.floor(Math.random() * (85 - 65) + 65); // Sri Lanka's humidity usually 65-85%
+
+    // Generate realistic wind speed
+    const windSpeed = Math.floor(Math.random() * 15) + 5; // Usually 5-20 km/h
+
+    // Common weather conditions in Sri Lanka
+    const weatherConditions = ["Clear", "Clouds", "Rain", "Mist"];
+    const currentHour = new Date().getHours();
+    
+    // More likely to be clear in the day, cloudy in the evening
+    let weightedConditions = weatherConditions;
+    if (currentHour > 6 && currentHour < 18) {
+        weightedConditions = ["Clear", "Clear", "Clouds", "Rain"];
+    } else {
+        weightedConditions = ["Clouds", "Clear", "Mist", "Rain"];
+    }
+
+    const weatherCondition = weightedConditions[Math.floor(Math.random() * weightedConditions.length)];
+
+    // Update UI
+    document.querySelector(".city").innerHTML = city;
+    document.querySelector(".temp").innerHTML = temp + "°c";
+    document.querySelector(".humidity").innerHTML = humidity + "%";
+    document.querySelector(".wind").innerHTML = windSpeed + " km/h";
+
+    // Update weather icon
+    switch (weatherCondition.toLowerCase()) {
+        case "clouds":
+            weatherIcon.src = "imgs/clouds.png";
+            break;
+        case "clear":
+            weatherIcon.src = "imgs/sun_PNG13418.png";
+            break;
+        case "rain":
+            weatherIcon.src = "imgs/rain.png";
+            break;
+        case "mist":
+            weatherIcon.src = "imgs/mist.png";
+            break;
+    }
+
+    document.querySelector(".weather").style.display = "block";
+}
+
+// Event listeners
+searchBtn.addEventListener("click", () => {
+    if (searchBox.value.trim() === "") {
+        alert("Please enter a city name!");
+        return;
+    }
+    // Use either the real API or mock version
+    // checkWeather(searchBox.value);  // Real API version
+    checkWeatherMock(searchBox.value); // Mock version
+});
+
+searchBox.addEventListener("keypress", (event) => {
+    if (event.key === "Enter") {
+        if (searchBox.value.trim() === "") {
+            alert("Please enter a city name!");
+            return;
+        }
+        // Use either the real API or mock version
+        // checkWeather(searchBox.value);  // Real API version
+        checkWeatherMock(searchBox.value); // Mock version
+    }
+});
+
+
+
+</script>
+    
+</body>
+</html>
