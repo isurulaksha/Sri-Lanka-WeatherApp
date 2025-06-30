@@ -9,7 +9,7 @@
 
 <div class="card">
     <div class="search">
-        <input type="text" placeholder="enter city name" spellcheck="false"></button>
+        <input type="text" placeholder="enter city name" spellcheck="false">
         <button><img src="imgs/search.png" ></button>
         
         <div class="flag">  
@@ -28,14 +28,43 @@
                     <p>Humidity</p>
                 </div>
             </div>
+            <button id="today-btn" class="today-btn" style="align-self:center;">
+              <span class="today-btn-icon" aria-hidden="true" style="display:inline-flex;align-items:center;justify-content:center;margin-right:8px;">
+                <!-- Sun SVG icon -->
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="10" cy="10" r="5" fill="#fff200"/>
+                  <g stroke="#fff200" stroke-width="2">
+                    <line x1="10" y1="1" x2="10" y2="4"/>
+                    <line x1="10" y1="16" x2="10" y2="19"/>
+                    <line x1="1" y1="10" x2="4" y2="10"/>
+                    <line x1="16" y1="10" x2="19" y2="10"/>
+                    <line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/>
+                    <line x1="13.66" y1="13.66" x2="15.78" y2="15.78"/>
+                    <line x1="4.22" y1="15.78" x2="6.34" y2="13.66"/>
+                    <line x1="13.66" y1="6.34" x2="15.78" y2="4.22"/>
+                  </g>
+                </svg>
+              </span>
+              Today
+            </button>
             <div class="col">
                 <img src="imgs/wind.png">
                 <div>
                     <p class="wind">15 km/h</p>
                     <p>Wind Speed</p>
-                       
+                </div>
+            </div>
         </div>
     </div>
+</div>
+
+<!-- Forecast Summary Modal -->
+<div id="forecast-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); z-index:1000; align-items:center; justify-content:center;">
+  <div style="background:#fff; padding:20px; border-radius:8px; max-width:400px; margin:auto; position:relative;">
+    <button id="close-forecast" style="position:absolute; top:8px; right:8px; background:none; border:none; font-size:18px; cursor:pointer;">&times;</button>
+    <h2>Sri Lanka Daily Weather Forecast</h2>
+    <div id="forecast-summary" style="margin-top:10px;"></div>
+  </div>
 </div>
 
 <script>
@@ -86,7 +115,7 @@ async function checkWeather(city) {
                 weatherIcon.src = "imgs/rain.png";
                 break;
             case "drizzle":
-                weatherIcon.src = "imgs/drizzle.png";
+                weatherIcon.src = "imgs/drizzel.png";
                 break;
             case "mist":
             case "haze":
@@ -213,7 +242,38 @@ searchBox.addEventListener("keypress", (event) => {
     }
 });
 
+// Today button logic
+const todayBtn = document.getElementById("today-btn");
+const forecastModal = document.getElementById("forecast-modal");
+const forecastSummary = document.getElementById("forecast-summary");
+const closeForecast = document.getElementById("close-forecast");
 
+todayBtn.addEventListener("click", () => {
+    // Mock summary for Sri Lanka
+    const summary = `
+    <strong>Today's Weather in Sri Lanka:</strong><br>
+    Expect mostly <b>partly cloudy</b> skies with occasional <b>showers</b> in the southwestern and central regions.<br>
+    <ul style="margin:8px 0 0 18px;">
+      <li><b>Temperature:</b> 27–32°C in most areas, cooler (18–22°C) in the central hills.</li>
+      <li><b>Humidity:</b> High, around 75–85%.</li>
+      <li><b>Winds:</b> Light to moderate, stronger along the coast.</li>
+    </ul>
+    <br>
+    <b>Summary:</b> A warm and humid day for most, with a chance of afternoon rain, especially in the southwest and central hills. Stay hydrated and carry an umbrella if you're heading out!`;
+    forecastSummary.innerHTML = summary;
+    forecastModal.style.display = "flex";
+});
+
+closeForecast.addEventListener("click", () => {
+    forecastModal.style.display = "none";
+});
+
+// Hide modal when clicking outside the modal content
+forecastModal.addEventListener("click", (e) => {
+    if (e.target === forecastModal) {
+        forecastModal.style.display = "none";
+    }
+});
 
 </script>
     
