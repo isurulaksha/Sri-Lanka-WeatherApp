@@ -94,3 +94,32 @@ body{
     margin-top: -6px;
 }
 
+.today-btn {
+    background: linear-gradient(135deg, #ff9800, #ff5722);
+    color: #fff;
+    border: none;
+    border-radius: 22px;
+    padding: 8px 18px 8px 14px;
+    font-size: 15px;
+    font-weight: 600;
+    margin-top: 14px;
+    margin-left: 0;
+    cursor: pointer;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.10);
+    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    outline: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.today-btn-icon svg {
+    display: block;
+    width: 18px;
+    height: 18px;
+}
+.today-btn:hover, .today-btn:focus {
+    background: linear-gradient(135deg, #ff5722, #ff9800);
+    transform: translateY(-1.5px) scale(1.03);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.16);
+}
+
